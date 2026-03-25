@@ -70,7 +70,7 @@
         "Clear error message if no provider key found",
         "npm run build passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "6",
@@ -83,7 +83,7 @@
         "Each prompt explicitly forbids markdown fences around JSON",
         "npm run build passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "7",
@@ -97,7 +97,7 @@
         "Both return provider and model in response",
         "npm run build passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "8",
@@ -111,7 +111,7 @@
         "Both use structured output pipeline",
         "npm run build passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "9",
@@ -125,7 +125,7 @@
         "npm run build passes",
         "node dist/index.js without any key shows clear error and exits with code 1"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "10",
@@ -139,7 +139,7 @@
         "README.md has: description, provider comparison table, installation commands, 4 tool examples with JSON output, limitations",
         "npm run build passes"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

@@ -1,24 +1,37 @@
-# gemini-second-opinion-mcp
+# second-opinion-mcp
 
-MCP server that gives Claude Code access to Google Gemini as a second opinion. Ask technical questions, get code reviews, verify claims, and compare approaches — all powered by Gemini 2.5 Flash.
+MCP server that gives any AI coding tool a structured second opinion from another AI provider.
 
-## Prerequisites
+Not chat. Not conversation. **Structured JSON verdicts** with fixed schemas: `YES`/`NO`, `PASS`/`FAIL`, confidence levels, evidence arrays, and actionable findings.
 
-- Node.js 20+
-- Gemini API key (free tier available)
+## Why
 
-## Get a Gemini API Key
+Your AI coding assistant can hallucinate, miss bugs, or give outdated advice. This server lets it cross-check with a different AI provider and get back a machine-readable verdict it can act on.
 
-1. Go to [Google AI Studio](https://aistudio.google.com/apikey)
-2. Click "Create API Key"
-3. Copy the key
+## Providers
+
+| Provider | Env Key | Default Model | Free Tier |
+|----------|---------|---------------|-----------|
+| Gemini | `GEMINI_API_KEY` | gemini-2.5-flash | 15 RPM, 1M tokens/day |
+| OpenAI | `OPENAI_API_KEY` | gpt-4.1-mini | Pay-as-you-go |
+| Groq | `GROQ_API_KEY` | llama-3.3-70b-versatile | 30 RPM, 14.4K tokens/min |
+| DeepSeek | `DEEPSEEK_API_KEY` | deepseek-chat | Pay-as-you-go (cheap) |
+
+Set one key and the server auto-detects which provider to use. Override with `SECOND_OPINION_PROVIDER` and `SECOND_OPINION_MODEL` env vars.
 
 ## Installation
 
-### Build the project
+### From npm
 
 ```bash
-cd C:\Users\mauri\Desktop\Projetos_Pessoais\MCP-Cerebro-2
+npm install -g second-opinion-mcp
+```
+
+### From source
+
+```bash
+git clone https://github.com/snarktank/second-opinion-mcp.git
+cd second-opinion-mcp
 npm install
 npm run build
 ```
@@ -26,87 +39,204 @@ npm run build
 ### Add to Claude Code
 
 ```bash
-claude mcp add gemini-second-opinion -s user -e GEMINI_API_KEY=<your-key> -- node C:\Users\mauri\Desktop\Projetos_Pessoais\MCP-Cerebro-2\dist\index.js
+claude mcp add second-opinion -s user -e GEMINI_API_KEY=your-key -- npx second-opinion-mcp
 ```
 
-Replace `<your-key>` with your actual Gemini API key.
+Or add to your MCP client config manually:
+
+```json
+{
+  "mcpServers": {
+    "second-opinion": {
+      "command": "npx",
+      "args": ["second-opinion-mcp"],
+      "env": {
+        "GEMINI_API_KEY": "your-key-here"
+      }
+    }
+  }
+}
+```
 
 ## Tools
 
-### gemini_ask
+### `second_opinion_ask`
 
-General-purpose questions to Gemini. Use for technical doubts, quick consultations, or when you need a second perspective.
+Ask a technical question. Get a verdict, not a wall of text.
 
-**Parameters:**
-- `question` (string, required): The question
-- `context` (string, optional): Additional context (code snippet, tech stack, etc.)
+**Input:**
 
-**Example:**
-```
-gemini_ask(question: "Is it safe to use JWT tokens in localStorage?", context: "Next.js app with Supabase auth")
-```
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `question` | string | yes | The technical question |
+| `context` | string | no | Additional context |
 
-### gemini_review_code
+**Example output:**
 
-Send code to Gemini for review. Returns bugs, risks, and suggestions.
-
-**Parameters:**
-- `code` (string, required): The code or diff to review
-- `context` (string, required): Project context
-- `focus` (string, optional): Review focus (e.g., "security", "performance", "race conditions")
-
-**Example:**
-```
-gemini_review_code(
-  code: "async function processWebhook(req) { const data = JSON.parse(req.body); await db.insert(data); return 200; }",
-  context: "FastAPI webhook handler for WhatsApp messages",
-  focus: "security"
-)
+```json
+{
+  "verdict": "NO",
+  "confidence": "HIGH",
+  "answer": "Usar eval() para parsing de JSON e inseguro, especialmente com input de usuarios. Use JSON.parse().",
+  "evidence": [
+    "eval() executa codigo arbitrario, permitindo injecao de codigo malicioso",
+    "JSON.parse() rejeita JSON invalido sem executar codigo",
+    "OWASP lista eval injection como vulnerabilidade critica"
+  ],
+  "provider": "gemini",
+  "model": "gemini-2.5-flash"
+}
 ```
 
-### gemini_verify_claim
+### `second_opinion_review`
 
-Verify if a technical claim is true. Use when unsure about API behavior, compatibility, or technical facts.
+Code review with structured findings per criterion.
 
-**Parameters:**
-- `claim` (string, required): The claim to verify
-- `technology` (string, optional): Related technology
+**Input:**
 
-**Example:**
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `code` | string | yes | Code or diff to review |
+| `language` | string | no | Language (auto-detected if omitted) |
+| `focus` | string[] | no | Review criteria (default: security, performance, correctness, error-handling) |
+
+**Example output:**
+
+```json
+{
+  "verdict": "FAIL",
+  "score": 2,
+  "criteria": [
+    {
+      "name": "security",
+      "status": "FAIL",
+      "findings": [
+        {
+          "severity": "HIGH",
+          "line": 2,
+          "issue": "SQL injection via string interpolation",
+          "fix": "Use parameterized queries: db.query('SELECT * FROM users WHERE id = $1', [id])"
+        }
+      ]
+    }
+  ],
+  "summary": "Vulnerabilidade critica de SQL injection. Use queries parametrizadas.",
+  "provider": "gemini",
+  "model": "gemini-2.5-flash"
+}
 ```
-gemini_verify_claim(claim: "Python asyncio.gather() cancels all tasks if one fails", technology: "Python 3.12 asyncio")
+
+### `second_opinion_verify`
+
+Fact-check a technical claim.
+
+**Input:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `claim` | string | yes | The claim to verify |
+| `context` | string | no | Additional context |
+
+**Example output:**
+
+```json
+{
+  "verdict": "YES",
+  "confidence": "HIGH",
+  "explanation": "WATCH monitora chaves e aborta a transacao MULTI/EXEC se qualquer chave monitorada for modificada por outro cliente.",
+  "caveats": [
+    "WATCH nao bloqueia outros clientes, apenas detecta conflitos",
+    "A transacao precisa ser re-tentada manualmente apos abort"
+  ],
+  "docs_to_check": [
+    "Redis WATCH command docs",
+    "Redis transactions documentation"
+  ],
+  "provider": "gemini",
+  "model": "gemini-2.5-flash"
+}
 ```
 
-### gemini_compare
+### `second_opinion_compare`
 
-Compare two technical approaches and get a recommendation for the given context.
+Compare two approaches with per-criterion breakdown.
 
-**Parameters:**
-- `approach_a` (string, required): First approach
-- `approach_b` (string, required): Second approach
-- `context` (string, required): Context and criteria
+**Input:**
 
-**Example:**
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `approach_a` | `{name, description}` | yes | First approach |
+| `approach_b` | `{name, description}` | yes | Second approach |
+| `criteria` | string[] | no | Comparison criteria (default: performance, maintainability, complexity, scalability) |
+| `context` | string | yes | Context for the comparison |
+
+**Example output:**
+
+```json
+{
+  "winner": "APPROACH_A",
+  "confidence": "HIGH",
+  "comparison": [
+    {
+      "criterion": "performance",
+      "winner": "TIE",
+      "reason": "Ambos operam em microsegundos para operacoes simples de key-value"
+    },
+    {
+      "criterion": "features",
+      "winner": "APPROACH_A",
+      "reason": "Redis tem TTL nativo, pub/sub, e estruturas de dados que facilitam sessoes"
+    }
+  ],
+  "recommendation": "Redis e a melhor escolha para sessoes. TTL nativo elimina logica de expiracao manual.",
+  "provider": "gemini",
+  "model": "gemini-2.5-flash"
+}
 ```
-gemini_compare(
-  approach_a: "Redis pub/sub for real-time notifications",
-  approach_b: "PostgreSQL LISTEN/NOTIFY for real-time notifications",
-  context: "SaaS with 500 concurrent users, already using PostgreSQL and Redis for caching"
-)
+
+## How It Works
+
+1. Your AI tool calls one of the 4 MCP tools
+2. The server builds a structured prompt that forces JSON output
+3. Sends to the configured provider (Gemini, OpenAI, Groq, or DeepSeek)
+4. Parses the response: `JSON.parse` -> retry with correction prompt -> regex extract -> Zod validation
+5. Returns a validated, schema-conforming JSON verdict
+
+Every response has a fixed schema. No surprises, no markdown, no chat.
+
+## Configuration
+
+Copy `.env.example` to `.env` and set your keys:
+
+```bash
+cp .env.example .env
 ```
 
-## Free Tier Limits
-
-- 15 requests per minute
-- 1 million tokens per day
-- Gemini 2.5 Flash model
-
-See [Google AI pricing](https://ai.google.dev/pricing) for current limits.
+| Variable | Description |
+|----------|-------------|
+| `GEMINI_API_KEY` | Google Gemini API key |
+| `OPENAI_API_KEY` | OpenAI API key |
+| `GROQ_API_KEY` | Groq API key |
+| `DEEPSEEK_API_KEY` | DeepSeek API key |
+| `SECOND_OPINION_PROVIDER` | Force a provider (skips auto-detection) |
+| `SECOND_OPINION_MODEL` | Force a model (overrides provider default) |
 
 ## Development
 
 ```bash
-npm run dev    # Watch mode (recompiles on change)
-npm run build  # One-time build
+npm run dev    # Watch mode
+npm run build  # Build once
 npm start      # Run the server
 ```
+
+## Limitations
+
+- Responses are in Brazilian Portuguese (pt-BR) by default
+- One provider at a time (no multi-provider consensus)
+- 30-second timeout per request
+- Free tier rate limits vary by provider
+- LLM responses are non-deterministic; verdicts may vary between calls
+
+## License
+
+MIT

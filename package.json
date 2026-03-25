@@ -1,11 +1,29 @@
 {
-  "name": "gemini-second-opinion-mcp",
+  "name": "second-opinion-mcp",
   "version": "1.0.0",
   "type": "module",
-  "description": "MCP server that gives Claude Code access to Gemini as a second opinion",
+  "description": "MCP server that gives any AI coding tool a structured second opinion from another AI provider",
   "bin": {
-    "gemini-second-opinion-mcp": "dist/index.js"
+    "second-opinion-mcp": "dist/index.js"
   },
+  "keywords": [
+    "mcp",
+    "ai",
+    "second-opinion",
+    "code-review",
+    "gemini",
+    "openai",
+    "groq",
+    "deepseek"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snarktank/second-opinion-mcp.git"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
