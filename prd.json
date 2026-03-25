@@ -14,7 +14,7 @@
         "Directories src/providers/ and src/tools/ exist",
         "npm run build passes (may have unused exports)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2",
@@ -27,7 +27,7 @@
         "Returns structured error object on all failure paths, never throws",
         "npm run build passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3",
@@ -41,7 +41,7 @@
         "Error handling returns formatted error, never throws unhandled",
         "npm run build passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "4",
@@ -55,7 +55,7 @@
         "30s timeout",
         "npm run build passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "5",
