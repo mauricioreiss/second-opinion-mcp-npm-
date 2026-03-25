@@ -12,10 +12,10 @@ Assistentes de IA alucinam, perdem bugs e dao conselhos desatualizados. Este ser
 
 | Provedor | Variavel | Modelo Padrao | Preco |
 |----------|----------|---------------|-------|
-| Gemini | `GEMINI_API_KEY` | gemini-2.5-flash | Tier gratuito disponivel, planos pagos para mais limites |
-| OpenAI | `OPENAI_API_KEY` | gpt-4.1-mini | Pago por uso |
+| Gemini | `GEMINI_API_KEY` | gemini-2.5-flash | Tier gratuito disponivel (pode exigir faturamento ativo no Google Cloud). Planos pagos para mais limites |
+| OpenAI | `OPENAI_API_KEY` | gpt-4.1-mini | Pago por uso (exige faturamento) |
 | Groq | `GROQ_API_KEY` | llama-3.3-70b-versatile | Tier gratuito disponivel, planos pagos para mais limites |
-| DeepSeek | `DEEPSEEK_API_KEY` | deepseek-chat | Pago por uso |
+| DeepSeek | `DEEPSEEK_API_KEY` | deepseek-chat | Pago por uso (exige faturamento) |
 
 Configure uma chave de API e o servidor detecta automaticamente o provedor. Ordem de deteccao: Gemini > OpenAI > Groq > DeepSeek.
 
@@ -216,6 +216,7 @@ Apenas uma chave de API e necessaria. Veja `.env.example` para detalhes e links 
 - Um provedor por vez (sem consenso multi-provedor)
 - Timeout de 30 segundos por requisicao
 - Limites de rate dependem do seu plano no provedor (tiers gratuitos tem limites menores; planos pagos removem a maioria das restricoes)
+- O tier gratuito do Gemini pode retornar erros 503 se o faturamento nao estiver ativo no seu projeto Google Cloud ou se a cota gratuita for excedida. Se isso acontecer, ative o faturamento em https://console.cloud.google.com/billing ou troque de provedor
 - Respostas de LLMs sao nao-deterministicas; o mesmo input pode gerar vereditos diferentes entre chamadas
 
 ## Licenca

@@ -12,10 +12,10 @@ AI coding assistants hallucinate, miss bugs, and give outdated advice. This serv
 
 | Provider | Env Key | Default Model | Pricing |
 |----------|---------|---------------|---------|
-| Gemini | `GEMINI_API_KEY` | gemini-2.5-flash | Free tier available, paid plans for higher limits |
-| OpenAI | `OPENAI_API_KEY` | gpt-4.1-mini | Pay-as-you-go |
+| Gemini | `GEMINI_API_KEY` | gemini-2.5-flash | Free tier available (may require billing enabled on Google Cloud). Paid plans for higher limits |
+| OpenAI | `OPENAI_API_KEY` | gpt-4.1-mini | Pay-as-you-go (requires billing) |
 | Groq | `GROQ_API_KEY` | llama-3.3-70b-versatile | Free tier available, paid plans for higher limits |
-| DeepSeek | `DEEPSEEK_API_KEY` | deepseek-chat | Pay-as-you-go |
+| DeepSeek | `DEEPSEEK_API_KEY` | deepseek-chat | Pay-as-you-go (requires billing) |
 
 Set one API key and the server auto-detects the provider. Detection order: Gemini > OpenAI > Groq > DeepSeek.
 
@@ -216,6 +216,7 @@ Only one API key is required. See `.env.example` for details and links to get ea
 - One provider at a time (no multi-provider consensus)
 - 30-second timeout per request
 - Rate limits depend on your provider plan (free tiers have lower limits; paid plans remove most restrictions)
+- Gemini free tier may return 503 errors if billing is not enabled on your Google Cloud project or if you exceed the free quota. If this happens, enable billing at https://console.cloud.google.com/billing or switch to another provider
 - LLM responses are non-deterministic; the same input may produce different verdicts across calls
 
 ## License
