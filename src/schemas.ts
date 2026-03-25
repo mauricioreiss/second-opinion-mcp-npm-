@@ -8,8 +8,6 @@ export const AskResponseSchema = z.object({
   confidence: Confidence,
   answer: z.string(),
   evidence: z.array(z.string()),
-  provider: z.string(),
-  model: z.string(),
 });
 
 export type AskResponse = z.infer<typeof AskResponseSchema>;
@@ -32,8 +30,6 @@ export const ReviewResponseSchema = z.object({
   score: z.number().min(1).max(10),
   criteria: z.array(CriterionSchema),
   summary: z.string(),
-  provider: z.string(),
-  model: z.string(),
 });
 
 export type ReviewResponse = z.infer<typeof ReviewResponseSchema>;
@@ -44,8 +40,6 @@ export const VerifyResponseSchema = z.object({
   explanation: z.string(),
   caveats: z.array(z.string()),
   docs_to_check: z.array(z.string()),
-  provider: z.string(),
-  model: z.string(),
 });
 
 export type VerifyResponse = z.infer<typeof VerifyResponseSchema>;
@@ -61,8 +55,6 @@ export const CompareResponseSchema = z.object({
   confidence: Confidence,
   comparison: z.array(ComparisonItemSchema),
   recommendation: z.string(),
-  provider: z.string(),
-  model: z.string(),
 });
 
 export type CompareResponse = z.infer<typeof CompareResponseSchema>;
