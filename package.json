@@ -1,6 +1,6 @@
 {
   "name": "@mrssoftwares/second-opinion-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "MCP server that gives any AI coding tool a structured second opinion from another AI provider",
   "bin": {
@@ -33,6 +33,7 @@
   "dependencies": {
     "@google/genai": "^1.0.0",
     "@modelcontextprotocol/sdk": "^1.12.0",
+    "@mrssoftwares/second-opinion-mcp": "^1.0.0",
     "dotenv": "^16.4.0",
     "openai": "^6.32.0",
     "zod": "^3.23.0"
