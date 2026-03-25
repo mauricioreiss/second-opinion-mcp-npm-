@@ -1,11 +1,7 @@
 import { z } from "zod";
 
-// --- Shared enums ---
-
 const Confidence = z.enum(["HIGH", "MEDIUM", "LOW"]);
 const Severity = z.enum(["HIGH", "MEDIUM", "LOW"]);
-
-// --- second_opinion_ask ---
 
 export const AskResponseSchema = z.object({
   verdict: z.enum(["YES", "NO", "PARTIAL", "UNCERTAIN"]),
@@ -17,8 +13,6 @@ export const AskResponseSchema = z.object({
 });
 
 export type AskResponse = z.infer<typeof AskResponseSchema>;
-
-// --- second_opinion_review ---
 
 const FindingSchema = z.object({
   severity: Severity,
@@ -44,8 +38,6 @@ export const ReviewResponseSchema = z.object({
 
 export type ReviewResponse = z.infer<typeof ReviewResponseSchema>;
 
-// --- second_opinion_verify ---
-
 export const VerifyResponseSchema = z.object({
   verdict: z.enum(["YES", "NO", "PARTIAL", "OUTDATED", "UNCERTAIN"]),
   confidence: Confidence,
@@ -57,8 +49,6 @@ export const VerifyResponseSchema = z.object({
 });
 
 export type VerifyResponse = z.infer<typeof VerifyResponseSchema>;
-
-// --- second_opinion_compare ---
 
 const ComparisonItemSchema = z.object({
   criterion: z.string(),

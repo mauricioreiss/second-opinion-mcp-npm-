@@ -36,25 +36,20 @@ export async function getStructuredResponse<T>(
   schema: ZodSchema<T>,
   retryFn?: () => Promise<string>
 ): Promise<T | StructuredError> {
-  // Step 1: Try JSON.parse on raw response
   let parsed = tryJsonParse(raw);
 
-  // Step 2: If parse failed and retry is available, ask LLM to fix its JSON
   if (parsed === null && retryFn) {
     try {
       const retryRaw = await retryFn();
       parsed = tryJsonParse(retryRaw);
     } catch {
-      // Retry failed, fall through to regex extraction
     }
   }
 
-  // Step 3: If still no valid JSON, try regex extraction (handles markdown fences, preamble text, etc.)
   if (parsed === null) {
     parsed = regexExtractJson(raw);
   }
 
-  // All parse attempts failed
   if (parsed === null) {
     return {
       verdict: "ERROR",
@@ -62,7 +57,6 @@ export async function getStructuredResponse<T>(
     };
   }
 
-  // Step 4: Validate against Zod schema
   const result = schema.safeParse(parsed);
   if (!result.success) {
     const issues = result.error.issues

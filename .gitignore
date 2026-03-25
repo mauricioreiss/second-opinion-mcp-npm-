@@ -4,3 +4,7 @@ dist/
 *.js.map
 .claude/
 _templates_personas/
+scripts/
+prd.json
+progress.txt
+CLAUDE.md

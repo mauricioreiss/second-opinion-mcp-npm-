@@ -1,9 +1,3 @@
-// System prompts for each tool. Each prompt:
-// 1. Defines the AI's role
-// 2. Includes the exact JSON schema
-// 3. Forces pt-BR responses
-// 4. Forbids markdown fences around JSON
-
 export function askSystemPrompt(): string {
   return `You are an expert technical advisor. Your job is to answer technical questions with a clear verdict and supporting evidence.
 

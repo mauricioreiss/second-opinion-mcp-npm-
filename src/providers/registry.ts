@@ -36,7 +36,6 @@ function detectProvider(): { name: string; apiKey: string } {
   );
 }
 
-// Singleton cache: reuse the same provider instance while env stays the same.
 let cachedProvider: Provider | null = null;
 let cachedFingerprint: string | null = null;
 
