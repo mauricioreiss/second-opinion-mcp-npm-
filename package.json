@@ -19,7 +19,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/snarktank/second-opinion-mcp.git"
+    "url": "git+https://github.com/mauricioreiss/second-opinion-mcp-npm-.git"
   },
   "files": [
     "dist"

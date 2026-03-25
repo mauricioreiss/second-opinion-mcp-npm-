@@ -36,14 +36,35 @@ function detectProvider(): { name: string; apiKey: string } {
   );
 }
 
+// Singleton cache: reuse the same provider instance while env stays the same.
+let cachedProvider: Provider | null = null;
+let cachedFingerprint: string | null = null;
+
+function envFingerprint(): string {
+  return [
+    process.env.SECOND_OPINION_PROVIDER ?? "",
+    process.env.SECOND_OPINION_MODEL ?? "",
+    ...DETECTION_ORDER.map((n) => process.env[PROVIDER_CONFIG[n].envKey] ?? ""),
+  ].join("|");
+}
+
 export function getProvider(): Provider {
+  const fingerprint = envFingerprint();
+
+  if (cachedProvider && cachedFingerprint === fingerprint) {
+    return cachedProvider;
+  }
+
   const { name, apiKey } = detectProvider();
   const config = PROVIDER_CONFIG[name];
   const model = process.env.SECOND_OPINION_MODEL || config.default;
 
   if (name === "gemini") {
-    return new GeminiProvider(apiKey, model);
+    cachedProvider = new GeminiProvider(apiKey, model);
+  } else {
+    cachedProvider = new OpenAICompatibleProvider(apiKey, model, name, config.baseUrl!);
   }
 
-  return new OpenAICompatibleProvider(apiKey, model, name, config.baseUrl!);
+  cachedFingerprint = fingerprint;
+  return cachedProvider;
 }

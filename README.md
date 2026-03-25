@@ -1,12 +1,12 @@
 # second-opinion-mcp
 
+Leia em portugues: [Portugues](README.pt-BR.md)
+
 MCP server that gives any AI coding tool a structured second opinion from another AI provider.
 
-Not chat. Not conversation. **Structured JSON verdicts** with fixed schemas: `YES`/`NO`, `PASS`/`FAIL`, confidence levels, evidence arrays, and actionable findings.
+## Why This Exists
 
-## Why
-
-Your AI coding assistant can hallucinate, miss bugs, or give outdated advice. This server lets it cross-check with a different AI provider and get back a machine-readable verdict it can act on.
+AI coding assistants hallucinate, miss bugs, and give outdated advice. This server lets them cross-check answers with a different AI provider and get back a machine-readable verdict they can act on. Not chat, not markdown -- fixed JSON schemas with enums (`YES`/`NO`, `PASS`/`FAIL`), confidence levels, and evidence arrays, all validated with Zod.
 
 ## Providers
 
@@ -17,32 +17,27 @@ Your AI coding assistant can hallucinate, miss bugs, or give outdated advice. Th
 | Groq | `GROQ_API_KEY` | llama-3.3-70b-versatile | 30 RPM, 14.4K tokens/min |
 | DeepSeek | `DEEPSEEK_API_KEY` | deepseek-chat | Pay-as-you-go (cheap) |
 
-Set one key and the server auto-detects which provider to use. Override with `SECOND_OPINION_PROVIDER` and `SECOND_OPINION_MODEL` env vars.
+Set one API key and the server auto-detects the provider. Detection order: Gemini > OpenAI > Groq > DeepSeek.
 
-## Installation
+## Quick Start
 
-### From npm
-
-```bash
-npm install -g second-opinion-mcp
-```
-
-### From source
+### Claude Code (one command)
 
 ```bash
-git clone https://github.com/snarktank/second-opinion-mcp.git
-cd second-opinion-mcp
-npm install
-npm run build
-```
-
-### Add to Claude Code
-
-```bash
+# With Gemini (free tier)
 claude mcp add second-opinion -s user -e GEMINI_API_KEY=your-key -- npx second-opinion-mcp
+
+# With OpenAI
+claude mcp add second-opinion -s user -e OPENAI_API_KEY=your-key -- npx second-opinion-mcp
+
+# With Groq (free tier)
+claude mcp add second-opinion -s user -e GROQ_API_KEY=your-key -- npx second-opinion-mcp
+
+# With DeepSeek
+claude mcp add second-opinion -s user -e DEEPSEEK_API_KEY=your-key -- npx second-opinion-mcp
 ```
 
-Or add to your MCP client config manually:
+### Other MCP Clients (JSON config)
 
 ```json
 {
@@ -58,41 +53,44 @@ Or add to your MCP client config manually:
 }
 ```
 
+### From Source
+
+```bash
+git clone https://github.com/mauricioreiss/second-opinion-mcp-npm-.git
+cd second-opinion-mcp-npm-
+npm install && npm run build
+```
+
 ## Tools
 
 ### `second_opinion_ask`
 
-Ask a technical question. Get a verdict, not a wall of text.
-
-**Input:**
+Ask a technical question. Returns a verdict, not a wall of text.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `question` | string | yes | The technical question |
 | `context` | string | no | Additional context |
 
-**Example output:**
-
 ```json
 {
   "verdict": "NO",
   "confidence": "HIGH",
-  "answer": "Usar eval() para parsing de JSON e inseguro, especialmente com input de usuarios. Use JSON.parse().",
+  "answer": "Usar eval() para parsing de JSON e inseguro. Use JSON.parse().",
   "evidence": [
-    "eval() executa codigo arbitrario, permitindo injecao de codigo malicioso",
-    "JSON.parse() rejeita JSON invalido sem executar codigo",
-    "OWASP lista eval injection como vulnerabilidade critica"
+    "eval() executa codigo arbitrario, permitindo injecao de codigo",
+    "JSON.parse() rejeita JSON invalido sem executar codigo"
   ],
   "provider": "gemini",
   "model": "gemini-2.5-flash"
 }
 ```
 
+Verdict: `YES` | `NO` | `PARTIAL` | `UNCERTAIN`. Confidence: `HIGH` | `MEDIUM` | `LOW`.
+
 ### `second_opinion_review`
 
 Code review with structured findings per criterion.
-
-**Input:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -100,12 +98,10 @@ Code review with structured findings per criterion.
 | `language` | string | no | Language (auto-detected if omitted) |
 | `focus` | string[] | no | Review criteria (default: security, performance, correctness, error-handling) |
 
-**Example output:**
-
 ```json
 {
   "verdict": "FAIL",
-  "score": 2,
+  "score": 3,
   "criteria": [
     {
       "name": "security",
@@ -113,39 +109,37 @@ Code review with structured findings per criterion.
       "findings": [
         {
           "severity": "HIGH",
-          "line": 2,
+          "line": 5,
           "issue": "SQL injection via string interpolation",
           "fix": "Use parameterized queries: db.query('SELECT * FROM users WHERE id = $1', [id])"
         }
       ]
     }
   ],
-  "summary": "Vulnerabilidade critica de SQL injection. Use queries parametrizadas.",
+  "summary": "Vulnerabilidade critica de SQL injection encontrada.",
   "provider": "gemini",
   "model": "gemini-2.5-flash"
 }
 ```
 
+Verdict: `PASS` | `FAIL` | `WARNING`. Score: 1-10. Finding severity: `HIGH` | `MEDIUM` | `LOW`. Line can be `null`.
+
 ### `second_opinion_verify`
 
 Fact-check a technical claim.
-
-**Input:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `claim` | string | yes | The claim to verify |
 | `context` | string | no | Additional context |
 
-**Example output:**
-
 ```json
 {
-  "verdict": "YES",
-  "confidence": "HIGH",
-  "explanation": "WATCH monitora chaves e aborta a transacao MULTI/EXEC se qualquer chave monitorada for modificada por outro cliente.",
+  "verdict": "PARTIAL",
+  "confidence": "MEDIUM",
+  "explanation": "Redis WATCH monitora chaves, mas nao garante isolamento total como locks tradicionais.",
   "caveats": [
-    "WATCH nao bloqueia outros clientes, apenas detecta conflitos",
+    "WATCH usa optimistic locking, nao bloqueia outros clientes",
     "A transacao precisa ser re-tentada manualmente apos abort"
   ],
   "docs_to_check": [
@@ -157,11 +151,11 @@ Fact-check a technical claim.
 }
 ```
 
+Verdict: `YES` | `NO` | `PARTIAL` | `OUTDATED` | `UNCERTAIN`. Confidence: `HIGH` | `MEDIUM` | `LOW`.
+
 ### `second_opinion_compare`
 
 Compare two approaches with per-criterion breakdown.
-
-**Input:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -169,8 +163,6 @@ Compare two approaches with per-criterion breakdown.
 | `approach_b` | `{name, description}` | yes | Second approach |
 | `criteria` | string[] | no | Comparison criteria (default: performance, maintainability, complexity, scalability) |
 | `context` | string | yes | Context for the comparison |
-
-**Example output:**
 
 ```json
 {
@@ -185,7 +177,7 @@ Compare two approaches with per-criterion breakdown.
     {
       "criterion": "features",
       "winner": "APPROACH_A",
-      "reason": "Redis tem TTL nativo, pub/sub, e estruturas de dados que facilitam sessoes"
+      "reason": "Redis tem TTL nativo e pub/sub, facilitando gerenciamento de sessoes"
     }
   ],
   "recommendation": "Redis e a melhor escolha para sessoes. TTL nativo elimina logica de expiracao manual.",
@@ -194,23 +186,18 @@ Compare two approaches with per-criterion breakdown.
 }
 ```
 
+Winner: `APPROACH_A` | `APPROACH_B` | `TIE` | `DEPENDS`. Per-criterion winner: `APPROACH_A` | `APPROACH_B` | `TIE`.
+
 ## How It Works
 
-1. Your AI tool calls one of the 4 MCP tools
-2. The server builds a structured prompt that forces JSON output
-3. Sends to the configured provider (Gemini, OpenAI, Groq, or DeepSeek)
-4. Parses the response: `JSON.parse` -> retry with correction prompt -> regex extract -> Zod validation
-5. Returns a validated, schema-conforming JSON verdict
+- Your AI tool calls one of the 4 MCP tools with structured input
+- The server builds a prompt that forces JSON-only output for the configured provider (Gemini, OpenAI, Groq, or DeepSeek)
+- The response goes through a parse pipeline: `JSON.parse` -> retry with correction prompt -> regex extraction
+- The parsed object is validated against a Zod schema. If it passes, the structured verdict is returned to the caller
 
-Every response has a fixed schema. No surprises, no markdown, no chat.
+Every response follows a fixed schema. No markdown, no chat, no surprises.
 
 ## Configuration
-
-Copy `.env.example` to `.env` and set your keys:
-
-```bash
-cp .env.example .env
-```
 
 | Variable | Description |
 |----------|-------------|
@@ -218,24 +205,18 @@ cp .env.example .env
 | `OPENAI_API_KEY` | OpenAI API key |
 | `GROQ_API_KEY` | Groq API key |
 | `DEEPSEEK_API_KEY` | DeepSeek API key |
-| `SECOND_OPINION_PROVIDER` | Force a provider (skips auto-detection) |
-| `SECOND_OPINION_MODEL` | Force a model (overrides provider default) |
+| `SECOND_OPINION_PROVIDER` | Force a specific provider (skips auto-detection) |
+| `SECOND_OPINION_MODEL` | Force a specific model (overrides provider default) |
 
-## Development
-
-```bash
-npm run dev    # Watch mode
-npm run build  # Build once
-npm start      # Run the server
-```
+Only one API key is required. See `.env.example` for details and links to get each key.
 
 ## Limitations
 
 - Responses are in Brazilian Portuguese (pt-BR) by default
 - One provider at a time (no multi-provider consensus)
 - 30-second timeout per request
-- Free tier rate limits vary by provider
-- LLM responses are non-deterministic; verdicts may vary between calls
+- Free tier rate limits vary by provider (check the Providers table)
+- LLM responses are non-deterministic; the same input may produce different verdicts across calls
 
 ## License
 

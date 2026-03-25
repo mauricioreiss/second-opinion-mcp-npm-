@@ -49,7 +49,7 @@ export function registerReviewTool(server: McpServer): void {
         raw = await provider.complete({
           systemPrompt,
           userPrompt,
-          temperature: 0.3,
+          temperature: 0.2,
           maxTokens: 4096,
         });
       } catch (err) {

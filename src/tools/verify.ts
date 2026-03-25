@@ -32,7 +32,7 @@ export function registerVerifyTool(server: McpServer): void {
         raw = await provider.complete({
           systemPrompt,
           userPrompt,
-          temperature: 0.3,
+          temperature: 0.1,
           maxTokens: 2048,
         });
       } catch (err) {
