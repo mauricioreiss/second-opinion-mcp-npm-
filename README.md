@@ -188,6 +188,18 @@ Compare two approaches with per-criterion breakdown.
 
 Winner: `APPROACH_A` | `APPROACH_B` | `TIE` | `DEPENDS`. Per-criterion winner: `APPROACH_A` | `APPROACH_B` | `TIE`.
 
+## Recommended Usage
+
+Add this to your project's `CLAUDE.md` (or equivalent AI instructions file):
+
+```
+Before committing critical code (auth, payments, sensitive data),
+use the `second_opinion_review` tool to get an external review.
+If the verdict is FAIL or score < 6, fix the issues before proceeding.
+```
+
+This is not a chat — it is a structured review with JSON output, numeric score, findings per criterion, and fix suggestions. It integrates into any workflow: CI pipelines, pre-commit hooks, or manual checks.
+
 ## How It Works
 
 - Your AI tool calls one of the 4 MCP tools with structured input

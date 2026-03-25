@@ -188,6 +188,18 @@ Compara duas abordagens com analise por criterio.
 
 Vencedor: `APPROACH_A` | `APPROACH_B` | `TIE` | `DEPENDS`. Vencedor por criterio: `APPROACH_A` | `APPROACH_B` | `TIE`.
 
+## Uso Recomendado
+
+Adicione isso ao `CLAUDE.md` do seu projeto (ou arquivo equivalente de instrucoes para IA):
+
+```
+Antes de commitar codigo critico (auth, pagamentos, dados sensiveis),
+use a tool `second_opinion_review` para obter um parecer externo.
+Se o verdict for FAIL ou score < 6, corrija antes de prosseguir.
+```
+
+Isso nao e um chat — e um parecer estruturado com JSON, score numerico, findings por criterio e sugestoes de fix. Da pra integrar em qualquer workflow: pipelines de CI, pre-commit hooks ou verificacoes manuais.
+
 ## Como Funciona
 
 - Sua ferramenta de IA chama uma das 4 ferramentas MCP com input estruturado
