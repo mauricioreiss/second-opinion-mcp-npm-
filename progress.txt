@@ -1,0 +1,4 @@
+# Progress Log — second-opinion-mcp
+# Append-only. Each iteration adds learnings here.
+# Format: [iteration-number] what was done | what was learned
+
