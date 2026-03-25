@@ -10,12 +10,12 @@ AI coding assistants hallucinate, miss bugs, and give outdated advice. This serv
 
 ## Providers
 
-| Provider | Env Key | Default Model | Free Tier |
-|----------|---------|---------------|-----------|
-| Gemini | `GEMINI_API_KEY` | gemini-2.5-flash | 15 RPM, 1M tokens/day |
+| Provider | Env Key | Default Model | Pricing |
+|----------|---------|---------------|---------|
+| Gemini | `GEMINI_API_KEY` | gemini-2.5-flash | Free tier available, paid plans for higher limits |
 | OpenAI | `OPENAI_API_KEY` | gpt-4.1-mini | Pay-as-you-go |
-| Groq | `GROQ_API_KEY` | llama-3.3-70b-versatile | 30 RPM, 14.4K tokens/min |
-| DeepSeek | `DEEPSEEK_API_KEY` | deepseek-chat | Pay-as-you-go (cheap) |
+| Groq | `GROQ_API_KEY` | llama-3.3-70b-versatile | Free tier available, paid plans for higher limits |
+| DeepSeek | `DEEPSEEK_API_KEY` | deepseek-chat | Pay-as-you-go |
 
 Set one API key and the server auto-detects the provider. Detection order: Gemini > OpenAI > Groq > DeepSeek.
 
@@ -215,7 +215,7 @@ Only one API key is required. See `.env.example` for details and links to get ea
 - Responses are in Brazilian Portuguese (pt-BR) by default
 - One provider at a time (no multi-provider consensus)
 - 30-second timeout per request
-- Free tier rate limits vary by provider (check the Providers table)
+- Rate limits depend on your provider plan (free tiers have lower limits; paid plans remove most restrictions)
 - LLM responses are non-deterministic; the same input may produce different verdicts across calls
 
 ## License

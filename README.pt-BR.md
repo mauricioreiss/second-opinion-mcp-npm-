@@ -10,12 +10,12 @@ Assistentes de IA alucinam, perdem bugs e dao conselhos desatualizados. Este ser
 
 ## Provedores
 
-| Provedor | Variavel | Modelo Padrao | Tier Gratuito |
-|----------|----------|---------------|---------------|
-| Gemini | `GEMINI_API_KEY` | gemini-2.5-flash | 15 RPM, 1M tokens/dia |
+| Provedor | Variavel | Modelo Padrao | Preco |
+|----------|----------|---------------|-------|
+| Gemini | `GEMINI_API_KEY` | gemini-2.5-flash | Tier gratuito disponivel, planos pagos para mais limites |
 | OpenAI | `OPENAI_API_KEY` | gpt-4.1-mini | Pago por uso |
-| Groq | `GROQ_API_KEY` | llama-3.3-70b-versatile | 30 RPM, 14.4K tokens/min |
-| DeepSeek | `DEEPSEEK_API_KEY` | deepseek-chat | Pago por uso (barato) |
+| Groq | `GROQ_API_KEY` | llama-3.3-70b-versatile | Tier gratuito disponivel, planos pagos para mais limites |
+| DeepSeek | `DEEPSEEK_API_KEY` | deepseek-chat | Pago por uso |
 
 Configure uma chave de API e o servidor detecta automaticamente o provedor. Ordem de deteccao: Gemini > OpenAI > Groq > DeepSeek.
 
@@ -215,7 +215,7 @@ Apenas uma chave de API e necessaria. Veja `.env.example` para detalhes e links 
 - Respostas em portugues brasileiro (pt-BR) por padrao
 - Um provedor por vez (sem consenso multi-provedor)
 - Timeout de 30 segundos por requisicao
-- Limites de rate do tier gratuito variam por provedor (veja a tabela de Provedores)
+- Limites de rate dependem do seu plano no provedor (tiers gratuitos tem limites menores; planos pagos removem a maioria das restricoes)
 - Respostas de LLMs sao nao-deterministicas; o mesmo input pode gerar vereditos diferentes entre chamadas
 
 ## Licenca
