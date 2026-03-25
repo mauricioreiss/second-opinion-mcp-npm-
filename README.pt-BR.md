@@ -56,8 +56,8 @@ claude mcp add second-opinion -s user -e DEEPSEEK_API_KEY=sua-chave -- npx @mrss
 ### A Partir do Codigo Fonte
 
 ```bash
-git clone https://github.com/mauricioreiss/second-opinion-mcp-npm-.git
-cd second-opinion-mcp-npm-
+git clone https://github.com/mauricioreiss/second-opinion-mcp.git
+cd second-opinion-mcp
 npm install && npm run build
 ```
 
