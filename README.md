@@ -25,16 +25,16 @@ Set one API key and the server auto-detects the provider. Detection order: Gemin
 
 ```bash
 # With Gemini (free tier)
-claude mcp add second-opinion -s user -e GEMINI_API_KEY=your-key -- npx second-opinion-mcp
+claude mcp add second-opinion -s user -e GEMINI_API_KEY=your-key -- npx @mrssoftware/second-opinion-mcp
 
 # With OpenAI
-claude mcp add second-opinion -s user -e OPENAI_API_KEY=your-key -- npx second-opinion-mcp
+claude mcp add second-opinion -s user -e OPENAI_API_KEY=your-key -- npx @mrssoftware/second-opinion-mcp
 
 # With Groq (free tier)
-claude mcp add second-opinion -s user -e GROQ_API_KEY=your-key -- npx second-opinion-mcp
+claude mcp add second-opinion -s user -e GROQ_API_KEY=your-key -- npx @mrssoftware/second-opinion-mcp
 
 # With DeepSeek
-claude mcp add second-opinion -s user -e DEEPSEEK_API_KEY=your-key -- npx second-opinion-mcp
+claude mcp add second-opinion -s user -e DEEPSEEK_API_KEY=your-key -- npx @mrssoftware/second-opinion-mcp
 ```
 
 ### Other MCP Clients (JSON config)
@@ -44,7 +44,7 @@ claude mcp add second-opinion -s user -e DEEPSEEK_API_KEY=your-key -- npx second
   "mcpServers": {
     "second-opinion": {
       "command": "npx",
-      "args": ["second-opinion-mcp"],
+      "args": ["@mrssoftware/second-opinion-mcp"],
       "env": {
         "GEMINI_API_KEY": "your-key-here"
       }

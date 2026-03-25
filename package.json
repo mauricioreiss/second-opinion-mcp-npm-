@@ -1,5 +1,5 @@
 {
-  "name": "second-opinion-mcp",
+  "name": "@mrssoftware/second-opinion-mcp",
   "version": "1.0.0",
   "type": "module",
   "description": "MCP server that gives any AI coding tool a structured second opinion from another AI provider",
@@ -27,13 +27,15 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@google/genai": "^1.0.0",
     "@modelcontextprotocol/sdk": "^1.12.0",
     "dotenv": "^16.4.0",
-    "openai": "^6.32.0"
+    "openai": "^6.32.0",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

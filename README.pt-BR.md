@@ -25,16 +25,16 @@ Configure uma chave de API e o servidor detecta automaticamente o provedor. Orde
 
 ```bash
 # Com Gemini (tier gratuito)
-claude mcp add second-opinion -s user -e GEMINI_API_KEY=sua-chave -- npx second-opinion-mcp
+claude mcp add second-opinion -s user -e GEMINI_API_KEY=sua-chave -- npx @mrssoftware/second-opinion-mcp
 
 # Com OpenAI
-claude mcp add second-opinion -s user -e OPENAI_API_KEY=sua-chave -- npx second-opinion-mcp
+claude mcp add second-opinion -s user -e OPENAI_API_KEY=sua-chave -- npx @mrssoftware/second-opinion-mcp
 
 # Com Groq (tier gratuito)
-claude mcp add second-opinion -s user -e GROQ_API_KEY=sua-chave -- npx second-opinion-mcp
+claude mcp add second-opinion -s user -e GROQ_API_KEY=sua-chave -- npx @mrssoftware/second-opinion-mcp
 
 # Com DeepSeek
-claude mcp add second-opinion -s user -e DEEPSEEK_API_KEY=sua-chave -- npx second-opinion-mcp
+claude mcp add second-opinion -s user -e DEEPSEEK_API_KEY=sua-chave -- npx @mrssoftware/second-opinion-mcp
 ```
 
 ### Outros Clientes MCP (config JSON)
@@ -44,7 +44,7 @@ claude mcp add second-opinion -s user -e DEEPSEEK_API_KEY=sua-chave -- npx secon
   "mcpServers": {
     "second-opinion": {
       "command": "npx",
-      "args": ["second-opinion-mcp"],
+      "args": ["@mrssoftware/second-opinion-mcp"],
       "env": {
         "GEMINI_API_KEY": "sua-chave-aqui"
       }
