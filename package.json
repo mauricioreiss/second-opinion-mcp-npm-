@@ -1,5 +1,5 @@
 {
-  "name": "@mrssoftware/second-opinion-mcp",
+  "name": "@mrssoftwares/second-opinion-mcp",
   "version": "1.0.0",
   "type": "module",
   "description": "MCP server that gives any AI coding tool a structured second opinion from another AI provider",
